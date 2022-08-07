@@ -20,6 +20,8 @@ func mergeKLists(lists []*ListNode) *ListNode {
 	mid := k / 2
 	left := lists[0:mid]
 	right := lists[mid:k]
+
+	// 分别合并左边和右边的list
 	leftList := mergeKLists(left)
 	rightList := mergeKLists(right)
 
