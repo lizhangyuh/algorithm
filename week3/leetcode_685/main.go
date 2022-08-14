@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	edges := [][]int{[]int{1, 2}, []int{1, 3}, []int{2, 3}}
+	edges := [][]int{{1, 2}, {1, 3}, {2, 3}}
 	result := findRedundantDirectedConnection(edges)
 
 	fmt.Printf("result: %v\n", result)

@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	result := findOrder(4, [][]int{[]int{1, 0}, []int{2, 0}, []int{3, 1}, []int{3, 2}})
+	result := findOrder(4, [][]int{{1, 0}, {2, 0}, {3, 1}, {3, 2}})
 	fmt.Printf("result: %v\n", result)
 }
 
