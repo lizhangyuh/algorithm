@@ -2,91 +2,70 @@ package main
 
 import "fmt"
 
-type ListNode struct {
-	Val  int
-	Next *ListNode
-}
-
 func main() {
-	// [1,2,3,4,5]
-	// 2
-
-	head := buildList([]int{1, 2, 3, 4, 5})
-	k := 1
-	print(head)
-
-	result := reverseKGroup(head, k)
-
-	print(result)
-
-}
-
-func print(head *ListNode) {
-	for head != nil {
-		fmt.Printf("----%v\n", head.Val)
-		head = head.Next
-	}
-}
-
-func buildList(arr []int) *ListNode {
-	head := &ListNode{Val: arr[0]}
-	result := head
-	for i := 1; i < len(arr); i++ {
-		head.Next = &ListNode{Val: arr[i]}
-		head = head.Next
-	}
+	result := myAtoi("    -42")
 	fmt.Printf("result: %v\n", result)
-	return result
 }
 
-func reverseKGroup(head *ListNode, k int) *ListNode {
-	left := head
-	right, ok := groupK(left, k)
+func myAtoi(s string) int {
+	// start signed number end
+	const MinInt32, MaxInt32 = -1 << 31, 1<<31 - 1
+	states := map[string][]string{
+		"start":  {"end", "signed", "number", "end"},
+		"signed": {"end", "end", "number", "end"},
+		"number": {"end", "end", "number", "end"},
+		"end":    {"end", "end", "end", "end"},
+	}
 
-	pre := &ListNode{}
-	var result *ListNode
-	for ok {
-		temp := right.Next
-		tail := reverseList(left, right.Next)
+	index := map[string]int{
+		"start":  0,
+		"signed": 1,
+		"number": 2,
+		"end":    3,
+	}
 
-		pre.Next = tail
-		if result == nil {
-			result = tail
+	state := "start"
+	ans := 0
+	sign := 1
+
+	for i := 0; i <= len(s); i++ {
+		curr := get_state(s, i)
+
+		switch curr {
+		case "end":
+			fmt.Printf("ans: %v\n", ans)
+			fmt.Printf("sign: %v\n", sign)
+			return ans * sign
+		case "number":
+			ans = ans*10 + int(s[i]) - 48
+			if ans >= MaxInt32 {
+				return MaxInt32
+			}
+			if ans <= MinInt32 {
+				return MinInt32
+			}
+		case "signed":
+			if s[i] == '-' {
+				sign = -1
+			}
 		}
-		pre = left
-		left = temp
-		right, ok = groupK(left, k)
-	}
-	pre.Next = left
 
-	return result
+		curr = states[state][index[curr]]
+	}
+
+	return ans
 }
 
-func groupK(head *ListNode, k int) (*ListNode, bool) {
-	if head == nil {
-		return nil, false
+func get_state(s string, i int) string {
+	switch {
+	case i >= len(s):
+		return "end"
+	case s[i] == ' ':
+		return "start"
+	case s[i] == '+' || s[i] == '-':
+		return "signed"
+	case s[i] >= '0' && s[i] <= '9':
+		return "number"
 	}
-
-	step := 1
-	for step < k {
-		if head.Next == nil {
-			return head, false
-		}
-		head = head.Next
-		step++
-	}
-	return head, true
-}
-
-func reverseList(start *ListNode, stop *ListNode) *ListNode {
-	point := start
-	start = start.Next
-	for start != stop {
-		temp := start.Next
-		start.Next = point
-		point = start
-		start = temp
-	}
-
-	return point
+	return "end"
 }
